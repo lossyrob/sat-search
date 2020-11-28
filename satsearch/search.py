@@ -58,12 +58,12 @@ class Search(object):
         }
         kwargs.update(self.kwargs)
         url = urljoin(self.url, 'search')
-        
+
         results = self.query(url=url, headers=headers, **kwargs)
         # TODO - check for status_code
         logger.debug(f"Found: {json.dumps(results)}")
         found = 0
-        if 'context' in results:
+        if 'context' in results and results['context'] is not None:
             found = results['context']['matched']
         elif 'numberMatched' in results:
             found = results['numberMatched']
@@ -108,7 +108,7 @@ class Search(object):
                 _headers = nextlink.get('headers', {})
                 _body = nextlink.get('body', {})
                 _body.update({'limit': page_limit})
-                
+
                 if nextlink.get('merge', False):
                     _headers.update(headers)
                     _body.update(self.kwargs)
